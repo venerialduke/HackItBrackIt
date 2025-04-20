@@ -1,13 +1,20 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
 
-app = Flask(__name__)
-app.config.from_object('config.Config')
+db = SQLAlchemy()
 
-db = SQLAlchemy(app)
+def create_app():
+	app = Flask(__name__)
+	app.config['SECRET_KEY'] = 'your_secret_key'
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../instance/app.db'
+	app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-login = LoginManager(app)
-login.login_view = 'login'
+	db.init_app(app)
 
-from app import routes, models
+	with app.app_context():
+		from . import routes  # <- this loads bp from routes.py
+		app.register_blueprint(routes.bp)  # <- this registers all routes
+		from . import models
+		db.create_all()
+
+	return app

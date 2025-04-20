@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-4">Welcome to the Cribbage Tournament</h1>
+<p class="lead">This is the registration page.</p>
+
+{% if participants %}
+<table class="table table-striped align-middle">
+	<thead>
+		<tr>
+			<th>Avatar</th>
+			<th>Name</th>
+			<th>Favorite Color</th>
+			<th>Favorite Show</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for p in participants %}
+		<tr>
+			<td><img src="{{ url_for('static', filename='avatars/' ~ p.avatar_filename) }}" width="50" class="rounded"></td>
+			<td>{{ p.name }}</td>
+			<td>{{ p.favorite_color }}</td>
+			<td>{{ p.favorite_show }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% else %}
+<p>No participants yet.</p>
+{% endif %}
+
+<hr class="my-4">
+
+<h3>Add a New Participant</h3>
+<form method="POST" class="row g-3">
+	<div class="col-md-4">
+		<input type="text" name="name" class="form-control" placeholder="Name" required>
+	</div>
+	<div class="col-md-4">
+		<input type="text" name="color" class="form-control" placeholder="Favorite Color">
+	</div>
+	<div class="col-md-4">
+		<input type="text" name="show" class="form-control" placeholder="Favorite Show">
+	</div>
+	<div class="col-12">
+		<button type="submit" class="btn btn-primary mt-2">Add Participant</button>
+	</div>
+</form>
+{% endblock %}

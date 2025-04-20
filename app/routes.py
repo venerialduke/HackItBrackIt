@@ -34,6 +34,11 @@ def generate_avatar_filename(name, color, show):
 
 @bp.route('/bracket', methods=['GET', 'POST'])
 def bracket():
+	from .bracket_logic import Bracket
 	participants = Participant.query.all()
 	bracket = Bracket(participants)
+
+	# Debug output
+	bracket.debug_print()
+
 	return render_template('bracket.html', bracket=bracket)

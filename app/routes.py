@@ -1,6 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for
 from .models import Participant
+from .bracket_logic import Bracket
 from . import db
+from flask import Blueprint
 
 bp = Blueprint('main', __name__)  # <- this is the blueprint object
 
@@ -32,35 +34,6 @@ def generate_avatar_filename(name, color, show):
 
 @bp.route('/bracket', methods=['GET', 'POST'])
 def bracket():
-	from .models import Participant
 	participants = Participant.query.all()
-
-	# Handle form submission
-	if request.method == 'POST':
-		print("Form submitted:", request.form)
-
-		# Optional: Parse submitted scores
-		try:
-			# Example: grabbing score inputs based on player IDs
-			player1_id = int(request.form.get('player1_id'))
-			player2_id = int(request.form.get('player2_id'))
-			score1 = int(request.form.get(f'score_{player1_id}'))
-			score2 = int(request.form.get(f'score_{player2_id}'))
-
-			print(f"Game result: {player1_id} ({score1}) vs {player2_id} ({score2})")
-
-			# TODO: store result, advance winner, etc.
-		except Exception as e:
-			print("Error parsing form:", e)
-
-		# Redirect to GET version to prevent form resubmission
-		return redirect(url_for('main.bracket'))
-
-	# TEMPORARY hardcoded matchups (we’ll improve this soon)
-	matchups = []
-	if len(participants) >= 2:
-		matchups.append((participants[0], participants[1]))
-	if len(participants) >= 4:
-		matchups.append((participants[2], participants[3]))
-
-	return render_template('bracket.html', matchups=matchups)
+	bracket = Bracket(participants)
+	return render_template('bracket.html', bracket=bracket)

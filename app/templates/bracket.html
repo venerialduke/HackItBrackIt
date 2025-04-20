@@ -1,50 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 class="mb-4">Tournament Bracket</h1>
+<h2 class="mb-4">Tournament Bracket</h2>
 
-{% if matchups %}
-	<div class="row row-cols-1 row-cols-md-2 g-4">
-		{% for player1, player2 in matchups %}
-		{% if player1 and player2 %}
+{% for round in bracket.rounds %}
+	<h4>Round {{ loop.index }}</h4>
+	<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mb-4">
+		{% for match in round %}
 		<div class="col">
-			<div class="card shadow-sm">
-				<div class="card-header bg-secondary text-white">
-					Matchup
+			<div class="card p-3 shadow-sm">
+				<div class="text-center mb-2">
+					{% if match.player1 %}
+						<img src="{{ url_for('static', filename='avatars/' ~ match.player1.avatar_filename) }}" width="50" class="rounded-circle">
+						<strong>{{ match.player1.name }}</strong>
+					{% else %}
+						<em>Bye</em>
+					{% endif %}
 				</div>
-				<div class="card-body">
-					<div class="d-flex justify-content-between align-items-center mb-3">
-						<div class="text-center">
-							<img src="{{ url_for('static', filename='avatars/' ~ player1.avatar_filename) }}" width="50" class="rounded-circle"><br>
-							<strong>{{ player1.name }}</strong>
-						</div>
-						<span class="fs-4">vs</span>
-						<div class="text-center">
-							<img src="{{ url_for('static', filename='avatars/' ~ player2.avatar_filename) }}" width="50" class="rounded-circle"><br>
-							<strong>{{ player2.name }}</strong>
-						</div>
-					</div>
-
-                    <form method="POST">
-                        <input type="hidden" name="player1_id" value="{{ player1.id }}">
-                        <input type="hidden" name="player2_id" value="{{ player2.id }}">
-                    
-                        <div class="row">
-                            <div class="col">
-                                <input type="number" class="form-control" placeholder="Score" name="score_{{ player1.id }}">
-                            </div>
-                            <div class="col">
-                                <input type="number" class="form-control" placeholder="Score" name="score_{{ player2.id }}">
-                            </div>
-                        </div>
-                        <button class="btn btn-primary mt-3 w-100">Submit Result</button>
-                    </form>
+				<div class="text-center text-muted">vs</div>
+				<div class="text-center mt-2">
+					{% if match.player2 %}
+						<img src="{{ url_for('static', filename='avatars/' ~ match.player2.avatar_filename) }}" width="50" class="rounded-circle">
+						<strong>{{ match.player2.name }}</strong>
+					{% else %}
+						<em>Bye</em>
+					{% endif %}
 				</div>
 			</div>
 		</div>
-		{% endif %}
 		{% endfor %}
 	</div>
-{% else %}
-<p>No matchups available yet. Start the tournament!</p>
-{% endif %}
+{% endfor %}
+
 {% endblock %}
